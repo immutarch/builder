@@ -103,9 +103,6 @@ sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' ${ROOT_WORKDIR}
 
 echo "(3/6) Bootstrapping core root"
 pacstrap ${ROOT_WORKDIR} ${UI_BOOTSTRAP}
-rm ${ROOT_WORKDIR}/etc/pacman.conf
-cp ${PACCFG} ${ROOT_WORKDIR}/etc/pacman.conf
-echo -e $OS_RELEASE > ${ROOT_WORKDIR}/etc/os-release
 echo -e $IMA_RELEASE > ${ROOT_WORKDIR}/etc/ima-release
 echo -e $IMAGE_HOSTNAME > ${ROOT_WORKDIR}/etc/hostname
 arch-chroot ${ROOT_WORKDIR} systemctl enable ${FLAVOR_CHROOT_SCRIPTS}
@@ -125,6 +122,7 @@ if [[ -d "${SCRIPTPATH}/postcopy_${POSTCOPY_DIR}" ]]; then
 	sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' ${ROOT_WORKDIR}/etc/locale.gen
 	arch-chroot ${ROOT_WORKDIR} locale-gen
 	arch-chroot ${ROOT_WORKDIR} localectl set-locale LANG=en_US.UTF-8
+	arch-chroot ${ROOT_WORKDIR} mkinitcpio -P
 fi
 
 echo "(5/6) Stop doing things in container..."
