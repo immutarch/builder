@@ -14,7 +14,7 @@ export FLAVOR_CHROOT_SCRIPTS="sddm bluetooth sshd systemd-timesyncd NetworkManag
 export FLAVOR_FINAL_DISTRIB_IMAGE=$FLAVOR_BUILDVER
 export KERNELCHOICE="linux-lts"
 export BASE_BOOTSTRAP_PKGS="base base-devel flatpak arch-install-scripts linux-firmware amd-ucode intel-ucode sddm dkms jq btrfs-progs grub efibootmgr openssh"
-export UI_BOOTSTRAP="plasma plasma-nm dolphin konsole kate sddm mesa vulkan-radeon vulkan-intel docker distrobox"
+export UI_BOOTSTRAP="plasma plasma-nm dolphin konsole kate sddm mesa vulkan-radeon vulkan-intel docker distrobox spectacle gwenview"
 export IMA_RELEASE="IMAGE_ID=\"${FLAVOR_BUILDVER}\"\nOS_TAG=${RELEASETAG}\nRELEASETYPE=$(echo ${OS_CODENAME} | tr '[:upper:]' '[:lower:]')\nISINTERNAL=no"
 export PACMAN_ONLOAD="[Unit]\nDescription=${DISTRO_NAME} onload - /var/lib/pacman\n\n[Mount]\nWhat=/${OS_FS_PREFIX}_root/rootfs/${FLAVOR_FINAL_DISTRIB_IMAGE}/var/lib/pacman\nWhere=/var/lib/pacman\nType=none\nOptions=bind\n\n[Install]\nWantedBy=ima-offload.target"
 export MKNEWDIR="nix boot/efi"
