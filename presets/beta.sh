@@ -9,7 +9,7 @@ echo -e ${RELEASETAG} > /tmp/builder-releasetag
 echo -e "$(echo ${DISTRO_NAME} | tr '[:upper:]' '[:lower:]')_$(date +%Y%m%d%H%M)_$(echo ${OS_CODENAME} | tr '[:upper:]' '[:lower:]')_${RELEASETAG}" > /tmp/build_temp_ver
 export FLAVOR_BUILDVER=$(cat /tmp/build_temp_ver)
 export IMAGEFILE="${FLAVOR_BUILDVER}"
-export FLAVOR_CHROOT_SCRIPTS="sddm bluetooth sshd systemd-timesyncd NetworkManager nix-daemon ima-offload.target var-lib-pacman.mount nix.mount opt.mount root.mount srv.mount usr-lib-debug.mount usr-local.mount var-cache-pacman.mount var-lib-docker.mount var-lib-flatpak.mount var-lib-systemd-coredump.mount var-log.mount var-tmp.mount"
+export FLAVOR_CHROOT_SCRIPTS="sddm bluetooth sshd systemd-timesyncd NetworkManager ima-offload.target var-lib-pacman.mount nix.mount opt.mount root.mount srv.mount usr-lib-debug.mount usr-local.mount var-cache-pacman.mount var-lib-docker.mount var-lib-flatpak.mount var-lib-systemd-coredump.mount var-log.mount var-tmp.mount"
 #export FLAVOR_PLYMOUTH_THEME="steamos"
 export FLAVOR_FINAL_DISTRIB_IMAGE=$FLAVOR_BUILDVER
 export KERNELCHOICE="linux-lts"
