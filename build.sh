@@ -120,7 +120,6 @@ if [[ -d "${SCRIPTPATH}/postcopy_${POSTCOPY_DIR}" ]]; then
 	arch-chroot ${ROOT_WORKDIR} systemctl enable ${FLAVOR_CHROOT_SCRIPTS}
 	echo "(4.5/6) Generating en_US.UTF-8 locale..."
 	sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' ${ROOT_WORKDIR}/etc/locale.gen
-	sed -i 's/Current=/Current=breeze/g' ${ROOT_WORKDIR}/usr/lib/sddm/sddm.conf.d/default.conf
 	arch-chroot ${ROOT_WORKDIR} locale-gen
 	echo "LANG=\"en_US.UTF-8\"" > ${ROOT_WORKDIR}/etc/locale.conf
 	arch-chroot ${ROOT_WORKDIR} mkinitcpio -P
