@@ -102,7 +102,7 @@ echo -e ${FSTAB} > ${ROOT_WORKDIR}/etc/fstab
 sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' ${ROOT_WORKDIR}/etc/sudoers
 
 echo "(3/6) Bootstrapping core root"
-pacstrap ${ROOT_WORKDIR} ${UI_BOOTSTRAP}
+pacstrap -C ${SCRIPTPATH}/pacman.conf ${ROOT_WORKDIR} ${UI_BOOTSTRAP}
 echo -e $IMA_RELEASE > ${ROOT_WORKDIR}/etc/ima-release
 echo -e $IMAGE_HOSTNAME > ${ROOT_WORKDIR}/etc/hostname
 arch-chroot ${ROOT_WORKDIR} systemctl enable ${FLAVOR_CHROOT_SCRIPTS}
