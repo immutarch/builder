@@ -133,7 +133,7 @@ umount -l ${ROOT_WORKDIR}/var/cache/pacman/pkg/
 echo "(6/6) Packaging snapshot..."
 btrfs subvolume snapshot -r ${ROOT_WORKDIR} ${ROOT_WORKDIR}/${OS_FS_PREFIX}_root/rootfs/${FLAVOR_BUILDVER}
 btrfs send -f ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img ${ROOT_WORKDIR}/${OS_FS_PREFIX}_root/rootfs/${FLAVOR_BUILDVER}
-umount -l ${ROOT_WORKDIR} && umount -l ${WORKDIR}/work.img && rm -rf ${WORKDIR} && ${WORKDIR}/work.img
+umount -l ${WORKDIR}/work.img
 if [[ -z "${NO_COMPRESS}" ]]; then
 	echo "Compressing image..."
 	if [[ ! $CI ]]; then
@@ -145,6 +145,7 @@ if [[ -z "${NO_COMPRESS}" ]]; then
 fi
 
 if [[ $CI ]]; then
+        rm -rf ${WORKDIR}/work.img
 	endpoint="https://api.github.com/repos/immutarch/releases_${POSTCOPY_DIR}/releases"
 	api=$(curl --http1.1 -L -s "${endpoint}")
 	stdout=$(echo $api | jq | jq 'del(.[] | select(.assets[].state != "uploaded"))')
