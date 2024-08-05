@@ -148,8 +148,8 @@ if [[ $CI ]]; then
 	endpoint="https://api.github.com/repos/immutarch/releases_${POSTCOPY_DIR}/releases"
 	api=$(curl --http1.1 -L -s "${endpoint}")
 	stdout=$(echo $api | jq | jq 'del(.[] | select(.assets[].state != "uploaded"))')
-	index1_image_name=$($(echo "${stdout}" | jq 'del(.[] | select(.assets[].state != "uploaded"))' | jq -er '[ .[] | select(.prerelease==false) ] | .[0] | .name'))
-	index2_image_name=$($(echo "${stdout}" | jq 'del(.[] | select(.assets[].state != "uploaded"))' | jq -er '[ .[] | select(.prerelease==false) ] | .[1] | .name'))
+	index1_image_name=$(echo "${stdout}" | jq 'del(.[] | select(.assets[].state != "uploaded"))' | jq -er '[ .[] | select(.prerelease==false) ] | .[0] | .name')
+	index2_image_name=$(echo "${stdout}" | jq 'del(.[] | select(.assets[].state != "uploaded"))' | jq -er '[ .[] | select(.prerelease==false) ] | .[1] | .name')
 	index1_image=$(echo "${stdout}" | jq -er '[ .[] | select(.prerelease==false) ] | .[0] | .assets[] | select(.name | endswith(".img.zst")) | .url')
 	index2_image=$(echo "${stdout}" | jq -er '[ .[] | select(.prerelease==false) ] | .[1] | .assets[] | select(.name | endswith(".img.zst")) | .url')
 	index1_imgpath=index1/${index1_image_name}.img.zst
