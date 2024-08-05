@@ -136,10 +136,41 @@ btrfs send -f ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img ${ROOT_WORKDIR}/${OS_F
 umount -l ${ROOT_WORKDIR} && umount -l ${WORKDIR}/work.img && rm -rf ${WORKDIR} && ${WORKDIR}/work.img
 if [[ -z "${NO_COMPRESS}" ]]; then
 	echo "Compressing image..."
+	if [[ ! $CI ]]; then
+		rm -rf ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img
+	fi
 	zstd --ultra -z ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img -o ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img.zst
-	rm -rf ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img
 	chown 1000:1000 ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img.zst
 	chmod 777 ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img.zst
+fi
+
+if [[ $CI ]]; then
+	endpoint="https://api.github.com/repos/immutarch/releases_${POSTCOPY_DIR}/releases"
+	api=$(curl --http1.1 -L -s "${endpoint}")
+	stdout=$(echo $api | jq | jq 'del(.[] | select(.assets[].state != "uploaded"))')
+	index1_image_name=$($(echo "${stdout}" | jq 'del(.[] | select(.assets[].state != "uploaded"))' | jq -er '[ .[] | select(.prerelease==false) ] | .[0] | .name'))
+	index2_image_name=$($(echo "${stdout}" | jq 'del(.[] | select(.assets[].state != "uploaded"))' | jq -er '[ .[] | select(.prerelease==false) ] | .[1] | .name'))
+	index1_image=$(echo "${stdout}" | jq -er '[ .[] | select(.prerelease==false) ] | .[0] | .assets[] | select(.name | endswith(".img.zst")) | .url')
+	index2_image=$(echo "${stdout}" | jq -er '[ .[] | select(.prerelease==false) ] | .[1] | .assets[] | select(.name | endswith(".img.zst")) | .url')
+	index1_imgpath=index1/${index1_image_name}.img.zst
+	index2_imgpath=index2/${index2_image_name}.img.zst
+	# Build incremental patch
+	echo "Building patch for Index1"
+	mkdir -p $(dirname index1_imgpath)
+	curl --http1.1 -# -L -H "Accept: application/octet-stream" -o ${index1_imgpath}  -C - "${index1_image}"
+	zstd -d "$index1_imgpath" -o "${index1_imgpath%.zst}"
+	rm -rf ${index1_imgpath}
+	hdiffz -c-zlib ${index1_imgpath%.zst} ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img $(dirname index1_imgpath)/incremental_patch.index1
+	rm -rf ${index1_imgpath%.zst}
+	echo "Building patch for Index2"
+	mkdir -p $(dirname index2_imgpath)
+	curl --http1.1 -# -L -H "Accept: application/octet-stream" -o ${index2_imgpath}  -C - "${index2_image}"
+	zstd -d "$index2_imgpath" -o "${index2_imgpath%.zst}"
+	rm -rf ${index2_imgpath}
+	hdiffz -c-zlib ${index2_imgpath%.zst} ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img $(dirname index2_imgpath)/incremental_patch.index2
+	rm -rf ${index2_imgpath%.zst}
+	rm -rf ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img
+	echo -e "INCREMENTAL_STORE=1\nINCREMENTAL_QUERY_INDEX1=${index1_image_name}\nINCREMENTAL_APPLYTO_INDEX1=${index1_image_name}\nINCREMENTAL_QUERY_INDEX2=${index2_image_name}\nINCREMENTAL_APPLYTO_INDEX2=${index2_image_name}" > ${OUTPUT}/patch.incremental_conditions
 fi
 
 echo "Build complete."
