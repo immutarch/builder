@@ -1,5 +1,7 @@
 #!/bin/bash
 
+CI=true
+
 SCRIPT=$(realpath "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 
