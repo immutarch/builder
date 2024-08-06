@@ -147,7 +147,7 @@ if [[ -z "${NO_COMPRESS}" ]]; then
 fi
 
 if [[ $CI ]]; then
-        rm -rf ${WORKDIR}/work.img
+	rm -rf ${WORKDIR}/work.img
 	endpoint="https://api.github.com/repos/immutarch/releases_${POSTCOPY_DIR}/releases"
 	api=$(curl --http1.1 -L -s "${endpoint}")
 	stdout=$(echo $api | jq | jq 'del(.[] | select(.assets[].state != "uploaded"))')
@@ -165,7 +165,7 @@ if [[ $CI ]]; then
 	rm -rf ${index1_imgpath}
 	hdiffz -c-zlib ${index1_imgpath%.zst} ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img $(dirname ${index1_imgpath})/incremental_patch.index1
 	chmod 777 $(dirname ${index1_imgpath})/incremental_patch.index1
-	chown 1000:1000 ${index1_imgpath})/incremental_patch.index1
+	chown 1000:1000 $(dirname ${index1_imgpath})/incremental_patch.index1
 	rm -rf ${index1_imgpath%.zst}
 	# echo "Building patch for Index2"
 	# mkdir -p $(dirname ${index2_imgpath})
