@@ -164,6 +164,8 @@ if [[ $CI ]]; then
 	zstd -d "${index1_imgpath}" -o "${index1_imgpath%.zst}"
 	rm -rf ${index1_imgpath}
 	hdiffz -c-zlib ${index1_imgpath%.zst} ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img $(dirname ${index1_imgpath})/incremental_patch.index1
+	chmod 777 $(dirname ${index1_imgpath})/incremental_patch.index1
+	chown 1000:1000 ${index1_imgpath})/incremental_patch.index1
 	rm -rf ${index1_imgpath%.zst}
 	# echo "Building patch for Index2"
 	# mkdir -p $(dirname ${index2_imgpath})
