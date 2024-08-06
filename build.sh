@@ -167,15 +167,17 @@ if [[ $CI ]]; then
 	chmod 777 $(dirname ${index1_imgpath})/incremental_patch.index1
 	chown 1000:1000 $(dirname ${index1_imgpath})/incremental_patch.index1
 	rm -rf ${index1_imgpath%.zst}
-	# echo "Building patch for Index2"
-	# mkdir -p $(dirname ${index2_imgpath})
-	# curl --http1.1 -# -L -H "Accept: application/octet-stream" -o ${index2_imgpath}  -C - "${index2_image}"
-	# zstd -d "${index2_imgpath}" -o "${index2_imgpath%.zst}"
-	# rm -rf ${index2_imgpath}
-	# hdiffz -c-zlib ${index2_imgpath%.zst} ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img $(dirname ${index2_imgpath})/incremental_patch.index2
-	# rm -rf ${index2_imgpath%.zst}
+	echo "Building patch for Index2"
+	mkdir -p $(dirname ${index2_imgpath})
+	curl --http1.1 -# -L -H "Accept: application/octet-stream" -o ${index2_imgpath}  -C - "${index2_image}"
+	zstd -d "${index2_imgpath}" -o "${index2_imgpath%.zst}"
+	rm -rf ${index2_imgpath}
+	hdiffz -c-zlib ${index2_imgpath%.zst} ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img $(dirname ${index2_imgpath})/incremental_patch.index2
+	chmod 777 $(dirname ${index2_imgpath})/incremental_patch.index2
+	chown 1000:1000 $(dirname ${index2_imgpath})/incremental_patch.index2
+	rm -rf ${index2_imgpath%.zst}
 	rm -rf ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img
-	echo -e "INCREMENTAL_STORE=1\nINCREMENTAL_QUERY_INDEX1=${index1_image_name}\nINCREMENTAL_APPLYTO_INDEX1=${index1_image_name}\nINCREMENTAL_QUERY_INDEX2none=${index2_image_name}\nINCREMENTAL_APPLYTO_INDEX2none=${index2_image_name}" > ${OUTPUT}/patch.incremental_conditions
+	echo -e "INCREMENTAL_STORE=1\nINCREMENTAL_QUERY_INDEX1=${index1_image_name}\nINCREMENTAL_APPLYTO_INDEX1=${index1_image_name}\nINCREMENTAL_QUERY_INDEX2=${index2_image_name}\nINCREMENTAL_APPLYTO_INDEX2=${index2_image_name}" > ${OUTPUT}/patch.incremental_conditions
 fi
 
 echo "Build complete."
