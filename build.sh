@@ -161,19 +161,19 @@ if [[ $CI ]]; then
 	echo "Building patch for Index1"
 	mkdir -p $(dirname ${index1_imgpath})
 	curl --http1.1 -# -L -H "Accept: application/octet-stream" -o ${index1_imgpath}  -C - "${index1_image}"
-	zstd -d "$index1_imgpath" -o "${index1_imgpath%.zst}"
+	zstd -d "${index1_imgpath}" -o "${index1_imgpath%.zst}"
 	rm -rf ${index1_imgpath}
-	hdiffz -c-zlib ${index1_imgpath%.zst} ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img $(dirname index1_imgpath)/incremental_patch.index1
+	hdiffz -c-zlib ${index1_imgpath%.zst} ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img $(dirname ${index1_imgpath})/incremental_patch.index1
 	rm -rf ${index1_imgpath%.zst}
-	echo "Building patch for Index2"
-	mkdir -p $(dirname ${index2_imgpath})
-	curl --http1.1 -# -L -H "Accept: application/octet-stream" -o ${index2_imgpath}  -C - "${index2_image}"
-	zstd -d "$index2_imgpath" -o "${index2_imgpath%.zst}"
-	rm -rf ${index2_imgpath}
-	hdiffz -c-zlib ${index2_imgpath%.zst} ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img $(dirname index2_imgpath)/incremental_patch.index2
-	rm -rf ${index2_imgpath%.zst}
+	# echo "Building patch for Index2"
+	# mkdir -p $(dirname ${index2_imgpath})
+	# curl --http1.1 -# -L -H "Accept: application/octet-stream" -o ${index2_imgpath}  -C - "${index2_image}"
+	# zstd -d "${index2_imgpath}" -o "${index2_imgpath%.zst}"
+	# rm -rf ${index2_imgpath}
+	# hdiffz -c-zlib ${index2_imgpath%.zst} ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img $(dirname ${index2_imgpath})/incremental_patch.index2
+	# rm -rf ${index2_imgpath%.zst}
 	rm -rf ${OUTPUT}/${FLAVOR_FINAL_DISTRIB_IMAGE}.img
-	echo -e "INCREMENTAL_STORE=1\nINCREMENTAL_QUERY_INDEX1=${index1_image_name}\nINCREMENTAL_APPLYTO_INDEX1=${index1_image_name}\nINCREMENTAL_QUERY_INDEX2=${index2_image_name}\nINCREMENTAL_APPLYTO_INDEX2=${index2_image_name}" > ${OUTPUT}/patch.incremental_conditions
+	echo -e "INCREMENTAL_STORE=1\nINCREMENTAL_QUERY_INDEX1=${index1_image_name}\nINCREMENTAL_APPLYTO_INDEX1=${index1_image_name}\nINCREMENTAL_QUERY_INDEX2none=${index2_image_name}\nINCREMENTAL_APPLYTO_INDEX2none=${index2_image_name}" > ${OUTPUT}/patch.incremental_conditions
 fi
 
 echo "Build complete."
